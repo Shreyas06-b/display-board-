@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Display Board Session 2025–26</title>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(to right, #74ebd5, #ACB6E5);
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 30px auto;
+      background-color: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.1);
+      padding: 30px;
+      text-align: center;
+    }
+
+    h1 {
+      color: #1E90FF;
+      font-size: 40px;
+      font-family: 'Baloo 2', cursive;
+      font-weight: 700;
+      margin-bottom: 30px;
+      text-shadow: 1px 1px 3px rgba(0,0,0,0.15);
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 8px;
+      margin-top: 20px;
+      text-align: left;
+    }
+
+    input[type="text"], textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      margin-bottom: 15px;
+      font-size: 14px;
+      box-sizing: border-box;
+    }
+
+    .inline-options {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 15px;
+      flex-wrap: wrap;
+      justify-content: flex-start;
+    }
+
+    .inline-options label {
+      font-weight: 400;
+      font-size: 15px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .rating {
+      display: flex;
+      gap: 6px;
+      font-size: 32px;
+      margin-bottom: 15px;
+      user-select: none;
+      justify-content: center;
+    }
+
+    .rating span {
+      cursor: pointer;
+      color: lightgray;
+      transition: color 0.2s ease;
+    }
+
+    .rating span.hover,
+    .rating span.selected {
+      color: #FFB400;
+    }
+
+    .submit-btn {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      font-size: 16px;
+      border-radius: 12px;
+      cursor: pointer;
+      margin-top: 20px;
+      width: 100%;
+      transition: background-color 0.3s ease;
+    }
+
+    .submit-btn:hover {
+      background-color: #3e8e41;
+    }
+
+    #confirmationMessage {
+      font-size: 22px;
+      font-weight: 600;
+      color: #28a745;
+      margin-top: 30px;
+      display: none;
+    }
+  </style>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const stars = document.querySelectorAll('.rating span');
+      let selectedRating = 0;
+
+      stars.forEach((star, idx) => {
+        star.addEventListener('mouseenter', () => highlightStars(idx + 1));
+        star.addEventListener('mouseleave', () => highlightStars(selectedRating));
+        star.addEventListener('click', () => {
+          selectedRating = idx + 1;
+          highlightStars(selectedRating);
+        });
+      });
+
+      function highlightStars(rating) {
+        stars.forEach((star, idx) => {
+          if (idx < rating) {
+            star.classList.add('hover');
+          } else {
+            star.classList.remove('hover');
+          }
+        });
+      }
+
+      document.getElementById('feedbackForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        if (!selectedRating) {
+          alert("Please select a rating before submitting.");
+          return;
+        }
+
+        const formData = new FormData();
+        formData.append("name", document.getElementById("name").value);
+        formData.append("branch", document.querySelector('input[name="branch"]:checked')?.value || "");
+        formData.append("understood", document.querySelector('input[name="understood"]:checked')?.value || "");
+        formData.append("interactive", document.querySelector('input[name="interactive"]:checked')?.value || "");
+        formData.append("rating", selectedRating);
+        formData.append("liked", document.getElementById("liked").value);
+        formData.append("moreSessions", document.querySelector('input[name="moreSessions"]:checked')?.value || "");
+
+        fetch("https://script.google.com/macros/s/AKfycbzHZkID1_ndJPqWzp5DBxw5Hkyk6LEVQWvIOuZZewI4_AEPYGP0JvmIAyasIhJxfaVI/exec", {
+          method: "POST",
+          body: formData,
+        })
+        .then(response => {
+          if (response.ok) {
+            document.getElementById('feedbackForm').style.display = 'none';
+            document.getElementById('confirmationMessage').style.display = 'block';
+            setTimeout(() => {
+              window.location.href = "https://www.google.com"; // change if you want a different redirect
+            }, 3000);
+          } else {
+            throw new Error("Network response was not OK");
+          }
+        })
+        .catch(error => {
+          alert("❌ Submission failed: " + error.message);
+        });
+      });
+    });
+  </script>
+</head>
+
+<body>
+  <div class="container">
+    <h1>Display Board Session 2025–26</h1>
+
+    <form id="feedbackForm">
+      <label for="name">1. What is your name?</label>
+      <input type="text" id="name" name="name" required>
+
+      <label>2. Select your branch:</label>
+      <div class="inline-options">
+        <label><input type="radio" name="branch" value="Hormavu" required> Hormavu</label>
+        <label><input type="radio" name="branch" value="HSR"> HSR</label>
+        <label><input type="radio" name="branch" value="Ecity"> Ecity</label>
+      </div>
+
+      <label>3. Did you understand the concept clearly?</label>
+      <div class="inline-options">
+        <label><input type="radio" name="understood" value="Yes" required> Yes</label>
+        <label><input type="radio" name="understood" value="No"> No</label>
+      </div>
+
+      <label>4. Was the session interactive?</label>
+      <div class="inline-options">
+        <label><input type="radio" name="interactive" value="Yes" required> Yes</label>
+        <label><input type="radio" name="interactive" value="No"> No</label>
+      </div>
+
+      <label>5. How would you rate this session?</label>
+      <div class="rating">
+        <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+      </div>
+
+      <label for="liked">6. What was the main thing you liked about the session?</label>
+      <textarea id="liked" name="liked" rows="4" required></textarea>
+
+      <label>7. Would you like more sessions like this?</label>
+      <div class="inline-options">
+        <label><input type="radio" name="moreSessions" value="Yes" required> Yes</label>
+        <label><input type="radio" name="moreSessions" value="No"> No</label>
+      </div>
+
+      <button type="submit" class="submit-btn">Submit Feedback</button>
+    </form>
+
+    <div id="confirmationMessage">Thank you for the feedback! 🎉</div>
+  </div>
+</body>
+</html>
